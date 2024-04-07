@@ -4,3 +4,6 @@
     src: systemd/
     dest: ~/.config/systemd/user/
   notify: reload systemd user daemon
+
+- name: Flush all handlers after unit file copying is finished
+  meta: flush_handlers
