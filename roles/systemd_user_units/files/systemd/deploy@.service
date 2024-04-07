@@ -1,9 +1,12 @@
 [Unit]
-Description=Cleanup old Foo data
+Description=Deploy %i!
 
 [Service]
-Type=oneshot
-ExecStart=echo deploy %i ff
+WorkingDirectory=%h/deploy/%i
+ExecStart=bash -c "\
+    [ -x deploy ] && exec ./deploy ||\
+    [ -x deploy.sh ] && exec ./deploy.sh ||\
+    echo deployment not found && exit 1"
 Environment=ANSIBLE_LOCALHOST_WARNING=False
 Environment=ANSIBLE_INVENTORY_UNPARSED_WARNING=False
 
