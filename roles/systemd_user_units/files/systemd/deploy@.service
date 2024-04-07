@@ -3,13 +3,10 @@ Description=Deploy %i!
 
 [Service]
 WorkingDirectory=%h/deploy/%i
-ExecStart=bash -c "\
-    [ -x deploy ] && exec ./deploy ||\
-    [ -x deploy.sh ] && exec ./deploy.sh ||\
-    echo deployment not found && exit 1"
+ExecStart=%h/deploy/%i/deploy.sh
 Environment=ANSIBLE_LOCALHOST_WARNING=False
 Environment=ANSIBLE_INVENTORY_UNPARSED_WARNING=False
-EnvironmentFile=-%h/deploy/%i/env
+EnvironmentFile=-%h/deploy/%i/deploy.env
 
 [Install]
 WantedBy=deploy.target
