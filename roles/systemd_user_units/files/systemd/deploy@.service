@@ -1,0 +1,11 @@
+[Unit]
+Description=Cleanup old Foo data
+
+[Service]
+Type=oneshot
+ExecStart=echo deploy %i ff
+Environment=ANSIBLE_LOCALHOST_WARNING=False
+Environment=ANSIBLE_INVENTORY_UNPARSED_WARNING=False
+
+[Install]
+WantedBy=deploy.target

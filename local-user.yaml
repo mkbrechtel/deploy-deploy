@@ -1,0 +1,6 @@
+---
+
+- name: Deploy the RPS Deployment System for the current user account
+  hosts: localhost
+  roles:
+    - gitops_for_user

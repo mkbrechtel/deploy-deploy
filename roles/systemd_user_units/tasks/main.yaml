@@ -1,0 +1,6 @@
+---
+- name: copy unit files
+  copy:
+    src: systemd/
+    dest: ~/.config/systemd/user/
+  notify: reload systemd user daemon
