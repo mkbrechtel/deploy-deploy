@@ -9,6 +9,7 @@ ExecStart=bash -c "\
     echo deployment not found && exit 1"
 Environment=ANSIBLE_LOCALHOST_WARNING=False
 Environment=ANSIBLE_INVENTORY_UNPARSED_WARNING=False
+EnvironmentFile=-%h/deploy/%i/env
 
 [Install]
 WantedBy=deploy.target
