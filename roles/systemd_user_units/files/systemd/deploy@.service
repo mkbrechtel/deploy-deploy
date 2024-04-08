@@ -3,10 +3,8 @@ Description=Deploy %i!
 
 [Service]
 WorkingDirectory=%h/deploy/%i
-ExecStart=%h/deploy/%i/deploy.sh
-Environment=ANSIBLE_LOCALHOST_WARNING=False
-Environment=ANSIBLE_INVENTORY_UNPARSED_WARNING=False
-EnvironmentFile=-%h/deploy/%i/deploy.env
+ExecStart=sh -c "echo run deploy cmd: $$DEPLOY_CMD; exec $$DEPLOY_CMD"
+EnvironmentFile=%h/deploy/%i/deploy.env
 
 [Install]
 WantedBy=deploy.target
