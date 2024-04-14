@@ -2,7 +2,7 @@
 Description=Deploy %i when deployment files change!
 
 [Path]
-PathChanged=%h/deploy/%i/deploy.env
+PathChanged=%h/deploy/%i
 TriggerLimitIntervalSec=60
 TriggerLimitBurst=60
 Unit=deploy@%i.service

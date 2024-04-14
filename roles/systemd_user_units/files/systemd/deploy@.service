@@ -1,10 +1,14 @@
 [Unit]
 Description=Deploy %i!
+OnSuccess=deploy-on-success@%i.service
+OnFailure=deploy-on-failure@%i.service
 
 [Service]
 WorkingDirectory=%h/deploy/%i
-ExecStart=sh -c "echo run deploy cmd: $$DEPLOY_CMD; exec $$DEPLOY_CMD"
-EnvironmentFile=%h/deploy/%i/deploy.env
+ExecStartPre=-%h/deploy/%i/pre
+ExecStart=%h/deploy/%i/deploy
+ExecStartPost=-%h/deploy/%i/post
+EnvironmentFile=%h/deploy/%i/env
 
 [Install]
 WantedBy=deploy.target
