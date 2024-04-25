@@ -1,0 +1,8 @@
+[Unit]
+Description=Deploy %i minutely (with a small random delay)!
+
+[Timer]
+OnUnitInactiveSec=1min
+OnBootSec=5min
+RandomizedDelaySec=15
+Unit=deploy@%i.service

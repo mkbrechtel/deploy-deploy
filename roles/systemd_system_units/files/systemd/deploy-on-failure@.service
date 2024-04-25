@@ -1,0 +1,10 @@
+[Unit]
+Description=On failure of %i deployment!
+
+[Service]
+WorkingDirectory=/etc/deploy/%i
+ExecStart=/etc/deploy/%i/on-failure
+EnvironmentFile=/etc/deploy/%i/env
+
+[Install]
+WantedBy=deploy.target

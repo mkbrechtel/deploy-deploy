@@ -1,0 +1,9 @@
+---
+- name: copy unit files
+  copy:
+    src: systemd/
+    dest: /etc/systemd/system/
+  notify: reload systemd system daemon
+
+- name: Flush all handlers after unit file copying is finished
+  meta: flush_handlers

@@ -1,0 +1,14 @@
+[Unit]
+Description=Deploy %i!
+OnSuccess=deploy-on-success@%i.service
+OnFailure=deploy-on-failure@%i.service
+
+[Service]
+WorkingDirectory=/etc/deploy/%i
+ExecStartPre=-/etc/deploy/%i/pre
+ExecStart=/etc/deploy/%i/deploy
+ExecStartPost=-/etc/deploy/%i/post
+EnvironmentFile=/etc/deploy/%i/env
+
+[Install]
+WantedBy=deploy.target
