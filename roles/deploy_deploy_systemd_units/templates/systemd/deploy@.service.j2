@@ -9,6 +9,10 @@ ExecStartPre=-{{deploy_systemd_units_instance_path}}/pre
 ExecStart={{deploy_systemd_units_instance_path}}/deploy
 ExecStartPost=-{{deploy_systemd_units_instance_path}}/post
 EnvironmentFile={{deploy_systemd_units_instance_path}}/env
+{% if deploy_systemd_units_scope == 'system' %}
+User=$USER
+Group=$GROUP
+{% endif %}
 
 [Install]
 WantedBy=deploy.target
