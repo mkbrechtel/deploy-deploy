@@ -1,0 +1,6 @@
+---
+
+- name: Reload systemd {{ deploy_systemd_units_scope }} daemon
+  systemd:
+    scope: "{{ deploy_systemd_units_scope }}"
+    daemon_reload: true

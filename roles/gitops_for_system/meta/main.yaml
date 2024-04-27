@@ -1,4 +1,5 @@
 ---
 
 dependencies:
-  - role: systemd_system_units
+  - role: deploy_systemd_units
+    deploy_systemd_units_scope: system
