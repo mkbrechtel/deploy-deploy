@@ -3,3 +3,4 @@
 dependencies:
   - role: deploy_deploy_systemd_units
     deploy_systemd_units_scope: system
+  - role: deploy_webhook_server
