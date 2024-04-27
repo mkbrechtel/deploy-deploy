@@ -1,0 +1,6 @@
+---
+
+- name: Deploy deploy the {{deploy_deploy_instance_id}} instance directory in {{deploy_deploy_instance_scope}} scope
+  file:
+    path: "{{ deploy_deploy_instance_path }}"
+    state: directory

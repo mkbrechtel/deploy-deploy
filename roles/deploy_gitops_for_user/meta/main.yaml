@@ -3,3 +3,6 @@
 dependencies:
   - role: deploy_deploy_systemd_units
     deploy_systemd_units_scope: user
+  - role: deploy_deploy_ansible_pull
+    deploy_deploy_instance_scope: user
+    deploy_deploy_instance_id: deploy-deploy
