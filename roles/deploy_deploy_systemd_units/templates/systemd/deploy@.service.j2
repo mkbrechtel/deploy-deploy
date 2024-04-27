@@ -1,7 +1,7 @@
 [Unit]
 Description=Deploy %i!
-OnSuccess=deploy-on-success@%i.service
-OnFailure=deploy-on-failure@%i.service
+OnSuccess=deploy-success-handler@%i.service
+OnFailure=deploy-failure-handler@%i.service
 
 [Service]
 WorkingDirectory={{deploy_systemd_units_instance_path}}
