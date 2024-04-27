@@ -1,5 +1,10 @@
 ---
-deploy_systemd_units_unit_path: "{{ _deploy_systemd_units_scope_map_unit_path[deploy_systemd_units_scope] }}"
-_deploy_systemd_units_scope_map_unit_path: 
+deploy_systemd_units_unit_path: "{{ deploy_systemd_units_scope_map_unit_path[deploy_systemd_units_scope] }}"
+deploy_systemd_units_scope_map_unit_path: 
   system: /etc/systemd/system/
   user: ~/.config/systemd/user/
+
+deploy_systemd_units_instance_path: "{{ deploy_systemd_units_scope_map_deploy_instance_path_default[deploy_systemd_units_scope] }}"
+deploy_systemd_units_scope_map_deploy_instance_path_default: 
+  system: /srv/deploy/%i
+  user: '%h/deploy/%i'

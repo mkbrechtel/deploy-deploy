@@ -1,0 +1,14 @@
+[Unit]
+Description=Deploy %i!
+OnSuccess=deploy-on-success@%i.service
+OnFailure=deploy-on-failure@%i.service
+
+[Service]
+WorkingDirectory={{deploy_systemd_units_instance_path}}
+ExecStartPre=-{{deploy_systemd_units_instance_path}}/pre
+ExecStart={{deploy_systemd_units_instance_path}}/deploy
+ExecStartPost=-{{deploy_systemd_units_instance_path}}/post
+EnvironmentFile={{deploy_systemd_units_instance_path}}/env
+
+[Install]
+WantedBy=deploy.target

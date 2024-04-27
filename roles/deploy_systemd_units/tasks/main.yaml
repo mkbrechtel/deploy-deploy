@@ -1,9 +1,18 @@
 ---
 
-- name: Copy static systemd unit files
+- name: Copy static systemd {{ deploy_systemd_units_scope }} unit files
   copy:
     src: systemd/
     dest: "{{ deploy_systemd_units_unit_path }}"
+  notify: Reload systemd {{ deploy_systemd_units_scope }} daemon
+
+- name: Generate template based systemd {{ deploy_systemd_units_scope }} unit files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ deploy_systemd_units_unit_path }}/{{ item.path | regex_replace('\\.j2$', '') }}"
+  with_filetree: "{{ role_path }}/templates/systemd"
+  loop_control:
+    label: "{{ item.path }}"
   notify: Reload systemd {{ deploy_systemd_units_scope }} daemon
 
 - name: Flush all handlers after unit file copying is finished
