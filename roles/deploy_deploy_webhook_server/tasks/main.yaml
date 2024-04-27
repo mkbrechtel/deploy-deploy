@@ -1,0 +1,6 @@
+---
+
+- name: Install required Debian packages
+  apt:
+    pkg:
+      - webhook

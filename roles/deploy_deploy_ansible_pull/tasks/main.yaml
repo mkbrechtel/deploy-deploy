@@ -1,0 +1,4 @@
+---
+
+- name: Template environment config
+  template:
