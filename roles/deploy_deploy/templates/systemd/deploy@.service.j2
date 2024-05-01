@@ -5,10 +5,10 @@ OnFailure=deploy-failure-handler@%i.service
 
 [Service]
 WorkingDirectory={{deploy_systemd_units_instance_path}}
-ExecStartPre=-{{deploy_systemd_units_instance_path}}/pre
-ExecStart={{deploy_systemd_units_instance_path}}/deploy
-ExecStartPost=-{{deploy_systemd_units_instance_path}}/post
-EnvironmentFile={{deploy_systemd_units_instance_path}}/env
+ExecStartPre=-{{deploy_systemd_units_instance_path}}/deploy.pre.sh
+ExecStart={{deploy_systemd_units_instance_path}}/deploy.sh
+ExecStartPost=-{{deploy_systemd_units_instance_path}}/deploy.post.sh
+EnvironmentFile={{deploy_systemd_units_instance_path}}/deploy.env
 {% if deploy_systemd_units_scope == 'system' %}
 User=$USER
 Group=$GROUP
