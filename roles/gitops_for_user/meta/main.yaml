@@ -4,5 +4,7 @@ dependencies:
   - role: deploy_deploy
     deploy_systemd_units_scope: user
   - role: ansible_pull
+    ansible_pull_url: https://github.com/mkbrechtel/deploy-deploy.git
     deploy_instance_scope: user
     deploy_instance_id: deploy-deploy
+    ansible_pull_playbooks: local-user.yaml
