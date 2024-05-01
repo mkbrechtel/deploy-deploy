@@ -26,7 +26,7 @@ ansible_pull_module_path: null
 ansible_pull_timeout: null
 ansible_pull_url: null
 ansible_pull_connection: null
-ansible_pull_directory: null
+ansible_pull_directory: repo
 ansible_pull_extra_vars: {}
 ansible_pull_force: false
 ansible_pull_inventory: null
