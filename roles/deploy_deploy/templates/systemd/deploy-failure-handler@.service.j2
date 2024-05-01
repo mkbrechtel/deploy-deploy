@@ -3,7 +3,7 @@ Description=Handle %i deployment failure!
 
 [Service]
 WorkingDirectory=%h/deploy/%i
-{% for cmd in deploy_deploy_systemd_units_failure_handler_commands %}
+{% for cmd in deploy_systemd_units_failure_handler_commands %}
 ExecStart={{cmd}}
 {% endfor %}
 ExecStart=-%h/deploy/%i/failure-handler

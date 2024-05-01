@@ -1,6 +1,0 @@
----
-
-deploy_systemd_units_scope: system
-
-deploy_deploy_systemd_units_success_handler_commands: []
-deploy_deploy_systemd_units_failure_handler_commands: []

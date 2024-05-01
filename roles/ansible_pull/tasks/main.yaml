@@ -3,10 +3,10 @@
 - name: Template environment config
   template:
     src: env.j2
-    dest: "{{ deploy_deploy_instance_path }}/env"
+    dest: "{{ deploy_instance_path }}/env"
 
 - name: Template deployment script
   template:
     src: deploy.sh.j2
-    dest: "{{ deploy_deploy_instance_path }}/deploy"
+    dest: "{{ deploy_instance_path }}/deploy"
     mode: 0755

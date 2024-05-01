@@ -1,0 +1,8 @@
+---
+
+dependencies:
+  - role: deploy_deploy
+    deploy_systemd_units_scope: user
+  - role: ansible_pull
+    deploy_instance_scope: user
+    deploy_instance_id: deploy-deploy

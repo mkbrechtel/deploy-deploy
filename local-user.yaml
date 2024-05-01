@@ -3,4 +3,4 @@
 - name: Deploy the RPS Deployment System for the current user account
   hosts: localhost
   roles:
-    - deploy_gitops_for_user
+    - gitops_for_user
