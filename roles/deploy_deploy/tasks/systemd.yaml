@@ -6,7 +6,7 @@
     dest: "{{ deploy_systemd_units_unit_path }}"
   notify: Reload systemd {{ deploy_systemd_units_scope }} daemon
 
-- name: Generate template based systemd {{ deploy_systemd_units_scope }} unit files
+- name: Template systemd {{ deploy_systemd_units_scope }} unit files
   template:
     src: "{{ item.src }}"
     dest: "{{ deploy_systemd_units_unit_path }}/{{ item.path | regex_replace('\\.j2$', '') }}"
