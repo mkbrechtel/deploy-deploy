@@ -1,9 +1,4 @@
 #!/bin/sh
-
-ansible_pull_common_option_args={{ansible_pull_common_option_args}}
-ansible_pull_playbooks_args={{ansible_pull_playbooks_args}}
-
-ansible-pull --version 
-ansible-pull --list-hosts $ansible_pull_common_option_args $ansible_pull_playbooks_args
-
-exec echo ansible-pull $ansible_pull_common_option_args $ansible_pull_playbooks_args
+exec echo ansible-pull \
+{{ansible_pull_common_option_args}} \
+{{ansible_pull_playbooks_args}}
