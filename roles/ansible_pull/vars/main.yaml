@@ -92,7 +92,7 @@ ansible_pull_common_option_args: >-
   {% endif %}
 
   {% if ansible_pull_directory %}
-  --directory {{ ansible_pull_directory | quote}}
+  --directory $(realpath {{ ansible_pull_directory | quote}})
   {% endif %}
 
   {% if ansible_pull_extra_vars %}
