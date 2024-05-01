@@ -4,12 +4,12 @@
     path: "{{ deploy_instance_path }}"
     state: directory
 
-- name: Template {{ ansible_parent_role_names[0] }} environment config for the {{ deploy_instance_id }} deploy instance in {{ deploy_instance_scope }} scope for the 
+- name: Template {{ ansible_parent_role_names | reverse | join(' ') }} environment config for the {{ deploy_instance_id }} deploy instance in {{ deploy_instance_scope }} scope
   template:
     src: deploy.env.j2 # Note that the template here is intentionally missing because we want it to be taken from the calling role
     dest: "{{ deploy_instance_path }}/env"
 
-- name: Template {{ ansible_parent_role_names[0] }} deployment script for the {{ deploy_instance_id }} deploy instance in {{ deploy_instance_scope }} scope
+- name: Template {{ ansible_parent_role_names | reverse | join(' ') }} deployment script for the {{ deploy_instance_id }} deploy instance in {{ deploy_instance_scope }} scope
   template:
     src: deploy.sh.j2 # Note that the template here is intentionally missing because we want it to be taken from the calling role
     dest: "{{ deploy_instance_path }}/deploy"
