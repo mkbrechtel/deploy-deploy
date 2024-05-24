@@ -1,3 +1,5 @@
+{{ansible_managed|comment}}
+
 [Unit]
 Description=Deploy %i minutely (with a small random delay)!
 

@@ -1,3 +1,5 @@
+{{ansible_managed|comment}}
+
 [Unit]
 Description=Deploy %i daily at noon (with a small random delay)!
 

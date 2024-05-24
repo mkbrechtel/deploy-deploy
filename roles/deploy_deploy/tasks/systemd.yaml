@@ -1,11 +1,5 @@
 ---
 
-- name: Copy static systemd {{ deploy_systemd_units_scope }} unit files
-  copy:
-    src: systemd/
-    dest: "{{ deploy_systemd_units_unit_path }}"
-  notify: Reload systemd {{ deploy_systemd_units_scope }} daemon
-
 - name: Template systemd {{ deploy_systemd_units_scope }} unit files
   template:
     src: "{{ item.src }}"
