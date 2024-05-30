@@ -1,6 +1,0 @@
----
-
-dependencies:
-  - role: deploy_deploy
-    deploy_systemd_units_scope: system
-  - role: webhook_server
