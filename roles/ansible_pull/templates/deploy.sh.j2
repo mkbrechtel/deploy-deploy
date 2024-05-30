@@ -1,4 +1,6 @@
 #!/bin/sh -ex
+{{ansible_managed|comment}}
+
 exec ansible-pull \
 {{ansible_pull_common_option_args}} \
 {{ansible_pull_playbooks_args}}

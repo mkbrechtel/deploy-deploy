@@ -136,10 +136,10 @@ ansible_pull_common_option_args: >-
   {% endif %}
 
 ansible_pull_playbooks_args: >-
-  {% if ansible_pull_playbooks is string %}
-  {{ansible_pull_playbooks}}
-  {% elif ansible_pull_playbooks is iterable %}
+  {% if ansible_pull_playbooks is iterable %}
   {% for playbook in ansible_pull_playbooks %}
   {{playbook}}
   {% endfor %}
+  {% else %}
+  {{ansible_pull_playbooks}}
   {% endif %}

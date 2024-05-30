@@ -37,3 +37,5 @@ ansible_pull_sleep: null
 ansible_pull_tags: null
 ansible_pull_remote_user: null
 ansible_pull_verbose: false
+
+#ansible_pull_collections_path: ./collections
