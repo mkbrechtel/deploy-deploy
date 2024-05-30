@@ -1,0 +1,5 @@
+---
+
+- name: Import deploy instance role
+  import_role:
+    role: deploy_instance
