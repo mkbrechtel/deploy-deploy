@@ -1,5 +1,11 @@
 ---
 
+- name: Systemd user config directory
+  file:
+    path: ~/.config/systemd/user
+    state: directory
+  when: deploy_systemd_units_scope == "user"
+
 - name: Template systemd {{ deploy_systemd_units_scope }} unit files
   template:
     src: "{{ item.src }}"
