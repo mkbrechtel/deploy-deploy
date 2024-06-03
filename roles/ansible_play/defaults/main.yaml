@@ -1,0 +1,15 @@
+---
+
+ansible_play_init_playbook:
+  - name: Initialize ansible play environment
+    hosts: localhost
+    gather_facts: false
+    tasks:
+      - name: Get ansible git repo
+        git:
+          repo: "{{ ansible_play_git_repo }}"
+          dest: repo
+      - name: Install ansible galaxy requirements
+        ansible_galaxy_install:
+          type: both
+          requirements_file: repo/requirements.yml

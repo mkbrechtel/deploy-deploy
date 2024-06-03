@@ -1,0 +1,10 @@
+#!/bin/sh -ex
+{{ansible_managed|comment}}
+
+{% if ansible_play_init_playbook %}
+ansible-playbook init.yaml
+{% else %}
+# no init: ansible_play_init_playbook is false
+{% endif %}
+
+#exec ansible-playbook deploy.yaml

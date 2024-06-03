@@ -1,0 +1,15 @@
+---
+
+- name: Template ansible init playbook
+  copy:
+    content: "{{ ansible_play_init_playbook | to_nice_yaml }}"
+    dest: "{{ deploy_instance_path }}/init.env"
+
+# - name: Template ansible deploy playbook
+#   copy:
+#     content: "{{ ansible_play_deploy_playbook | to_nice_yaml }}"
+#     dest: "{{ deploy_instance_path }}/deploy.env"
+
+- name: Import deploy instance role
+  import_role:
+    role: deploy_instance
