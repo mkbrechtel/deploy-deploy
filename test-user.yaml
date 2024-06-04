@@ -10,5 +10,5 @@
     - test_instance
     - role: ansible_play
       deploy_instance_id: ohai
-      ansible_play_git_repo: https://github.com/mkbrechtel/deploy-deploy.git
+      ansible_play_git_repo: "{{playbook_dir}}"
       ansible_play_import_playbook_filename: ohai.yaml
