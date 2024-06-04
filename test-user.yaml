@@ -1,0 +1,14 @@
+---
+
+- name: Deploy the RPS Deployment System for the current user account
+  hosts: localhost
+  vars:
+    deploy_systemd_units_scope: user
+    deploy_instance_scope: user
+  roles:
+    - deploy_deploy
+    - test_instance
+    - role: ansible_play
+      deploy_instance_id: ohai
+      ansible_play_git_repo: https://github.com/mkbrechtel/deploy-deploy.git
+      ansible_play_import_playbook_filename: ohai.yaml

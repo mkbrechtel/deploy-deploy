@@ -7,4 +7,3 @@
     deploy_instance_scope: user
   roles:
     - deploy_deploy
-    - test_instance

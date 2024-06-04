@@ -1,0 +1,8 @@
+---
+
+- name: ohai! - Test playbook that just greets the user
+  hosts: localhost
+  tasks:
+    - name: ohai
+      debug:
+        msg: i can haz deploy deploy?

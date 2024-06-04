@@ -16,6 +16,12 @@
     mode: 0755
   when: deploy_instance_with_init_script
 
+- name: Ensure absence of {{ ansible_parent_role_names | reverse | join(' ') }} deployment init script for the {{ deploy_instance_id }} deploy instance in {{ deploy_instance_scope }} scope
+  file:
+    path: "{{ deploy_instance_path }}/deploy.init"
+    state: absent
+  when: not deploy_instance_with_init_script
+
 - name: Template {{ ansible_parent_role_names | reverse | join(' ') }} deployment script for the {{ deploy_instance_id }} deploy instance in {{ deploy_instance_scope }} scope
   template:
     src: deploy.j2 # Note that the template here is intentionally missing because we want it to be taken from the calling role
