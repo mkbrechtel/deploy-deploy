@@ -3,5 +3,3 @@
 - name: Import deploy instance role
   import_role:
     role: deploy_instance
-  vars:
-    deploy_instance_with_init_script: true

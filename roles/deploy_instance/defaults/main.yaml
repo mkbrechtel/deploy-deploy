@@ -1,5 +1,3 @@
 ---
 
 deploy_instance_scope: system
-
-deploy_instance_with_init_script: false
