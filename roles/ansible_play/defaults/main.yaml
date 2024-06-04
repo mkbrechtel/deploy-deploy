@@ -2,7 +2,7 @@
 
 ansible_play_collections_path: collections
 
-ansible_play_install_ansible_galaxy_requirements: 
+ansible_play_install_ansible_galaxy_requirements: true
 
 ansible_play_init_playbook:
   - name: Initialize ansible play environment
@@ -19,7 +19,7 @@ ansible_play_init_playbook:
         community.general.ansible_galaxy_install:
           type: both
           requirements_file: repo/requirements.yml
-        when: install_requirements
+        when: install_ansible_galaxy_requirements
 
 ansible_play_deploy_playbook:
   - import_playbook: "repo/{{ ansible_play_import_playbook_filename }}"
