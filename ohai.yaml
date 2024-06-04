@@ -5,4 +5,4 @@
   tasks:
     - name: ohai
       debug:
-        msg: i can haz deploy deploy?
+        msg: in ur computer deplojin ur tings
