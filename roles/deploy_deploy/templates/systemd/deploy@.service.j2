@@ -11,7 +11,8 @@ OnFailure=deploy-failure-handler@%i.service
 
 [Service]
 WorkingDirectory={{deploy_systemd_units_instance_path}}
-ExecStart={{deploy_systemd_units_instance_path}}/deploy.sh
+ExecStartPre=-{{deploy_systemd_units_instance_path}}/deploy.init
+ExecStart={{deploy_systemd_units_instance_path}}/deploy
 EnvironmentFile={{deploy_systemd_units_instance_path}}/deploy.env
 {% if deploy_systemd_units_scope == 'system' %}
 User=$USER
