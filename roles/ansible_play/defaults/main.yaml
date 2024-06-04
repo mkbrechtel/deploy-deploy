@@ -1,6 +1,8 @@
 ---
 
-ansible_play_collections_path: collections
+ansible_play_collections_path: 
+- collections
+- /usr/share/ansible/collections
 
 ansible_play_install_ansible_galaxy_requirements: true
 
