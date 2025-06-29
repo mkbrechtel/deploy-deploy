@@ -1,5 +1,4 @@
 # This file is managed by the deploy-deploy Ansible collection
 
-
 [Unit]
 Description=Deploy target!

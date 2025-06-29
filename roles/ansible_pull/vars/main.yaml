@@ -1,3 +1,5 @@
+---
+
 ansible_pull_common_option_args: >-
   {% if ansible_pull_accept_host_key %}
   --accept-host-key

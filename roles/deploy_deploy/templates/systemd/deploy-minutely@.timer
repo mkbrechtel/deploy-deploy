@@ -1,6 +1,5 @@
 # This file is managed by the deploy-deploy Ansible collection
 
-
 [Unit]
 Description=Deploy %i minutely (with a small random delay)!
 
