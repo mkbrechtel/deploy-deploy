@@ -6,4 +6,3 @@
   roles:
     - deploy_deploy
     # - webhook_server
-    - test
