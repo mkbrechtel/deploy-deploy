@@ -1,0 +1,29 @@
+---
+- name: Test deploy_deploy role with refactored systemd units
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  
+  tasks:
+    - name: Test system scope installation
+      include_role:
+        name: deploy_deploy
+      vars:
+        deploy_systemd_units_scope: system
+      tags: system
+
+    - name: Test user scope with global installation
+      include_role:
+        name: deploy_deploy
+      vars:
+        deploy_systemd_units_scope: user
+        deploy_user_install_mode: global
+      tags: user-global
+
+    - name: Test user scope with home installation
+      include_role:
+        name: deploy_deploy
+      vars:
+        deploy_systemd_units_scope: user
+        deploy_user_install_mode: home
+      tags: user-home

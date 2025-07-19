@@ -1,0 +1,12 @@
+[Unit]
+Description=Deploy %i!
+
+[Service]
+WorkingDirectory=%h/.config/deploy/%i
+ExecStartPre=%h/.config/deploy/%i/deploy.init
+ExecStart=/etc/deploy/run.sh %i
+ExecStopPost=/etc/deploy/notify.sh "%H" "%i" "${EXIT_STATUS}" "/run/deploy/%i.out"
+EnvironmentFile=%h/.config/deploy/%i/deploy.env
+
+[Install]
+WantedBy=deploy.target

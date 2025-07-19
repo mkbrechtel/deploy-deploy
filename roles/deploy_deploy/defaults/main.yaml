@@ -1,6 +1,7 @@
 ---
 
 deploy_systemd_units_scope: system
+deploy_user_install_mode: global  # global or home
 
 # Notification settings
 notify_email_to: ""

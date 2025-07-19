@@ -1,0 +1,8 @@
+[Unit]
+Description=Deploy %i when deployment files change!
+
+[Path]
+PathChanged=%h/.config/deploy/%i/
+TriggerLimitIntervalSec=60
+TriggerLimitBurst=60
+Unit=deploy@%i.service

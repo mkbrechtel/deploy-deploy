@@ -8,4 +8,4 @@ deploy_systemd_units_scope_map_unit_path:
 deploy_systemd_units_instance_path: "{{ deploy_systemd_units_scope_map_deploy_instance_path_default[deploy_systemd_units_scope] }}"
 deploy_systemd_units_scope_map_deploy_instance_path_default: 
   system: /etc/deploy/%i
-  user: '%h/deploy/%i'
+  user: '%h/.config/deploy/%i'
