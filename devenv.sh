@@ -9,5 +9,5 @@ else
     podman build -t deploy-deploy-devenv -f Containerfile .
     
     echo "Creating new container 'deploy-deploy-devenv'..."
-    podman run --name deploy-deploy-devenv --hostname deploy-deploy-devenv -it -v ./:/mnt/deploy-deploy:rw deploy-deploy-devenv /lib/systemd/systemd
+    podman run --name deploy-deploy-devenv --hostname deploy-deploy-devenv -it -v ./:/mnt/deploy-deploy:rw -v deploy-deploy-root:/root:rw deploy-deploy-devenv /lib/systemd/systemd
 fi
