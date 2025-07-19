@@ -1,2 +1,3 @@
 ---
+- import_tasks: notify.yaml
 - import_tasks: systemd.yaml

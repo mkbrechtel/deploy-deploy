@@ -1,0 +1,48 @@
+---
+
+- name: Create deploy directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /etc/deploy
+    - /etc/deploy/notifiers
+    - /var/lib/deploy
+    - /var/lib/deploy/notify_email
+  when: deploy_systemd_units_scope == "system"
+
+- name: Copy notification scripts
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/deploy/{{ item | basename }}"
+    mode: '0755'
+  loop:
+    - notify.sh
+    - notify-email.sh
+  when: deploy_systemd_units_scope == "system"
+
+- name: Template run.sh wrapper script
+  template:
+    src: systemd/deploy-run.sh.j2
+    dest: /etc/deploy/run.sh
+    mode: '0755'
+  when: deploy_systemd_units_scope == "system"
+
+- name: Template email notification configuration
+  template:
+    src: notify_email.env.j2
+    dest: /etc/deploy/notify_email.env
+    mode: '0644'
+  when: 
+    - deploy_systemd_units_scope == "system"
+    - notify_email_to != ""
+
+- name: Make email notifier executable
+  file:
+    path: /etc/deploy/notifiers/notify-email.sh
+    src: /etc/deploy/notify-email.sh
+    state: link
+  when:
+    - deploy_systemd_units_scope == "system"
+    - notify_email_to != ""

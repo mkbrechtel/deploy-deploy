@@ -2,17 +2,12 @@
 
 [Unit]
 Description=Deploy %i!
-{% if deploy_systemd_units_success_handler_commands %}
-OnSuccess=deploy-success-handler@%i.service
-{% endif %}
-{% if deploy_systemd_units_failure_handler_commands %}
-OnFailure=deploy-failure-handler@%i.service
-{% endif %}
 
 [Service]
 WorkingDirectory={{deploy_systemd_units_instance_path}}
 ExecStartPre={{deploy_systemd_units_instance_path}}/deploy.init
-ExecStart={{deploy_systemd_units_instance_path}}/deploy
+ExecStart=/etc/deploy/run.sh %i
+ExecStopPost=/etc/deploy/notify.sh "%H" "%i" "${EXIT_STATUS}" "/run/deploy/%i.out"
 EnvironmentFile={{deploy_systemd_units_instance_path}}/deploy.env
 {% if deploy_systemd_units_scope == 'system' %}
 User=$USER

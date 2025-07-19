@@ -2,5 +2,10 @@
 
 deploy_systemd_units_scope: system
 
-deploy_systemd_units_success_handler_commands: []
-deploy_systemd_units_failure_handler_commands: []
+# Notification settings
+notify_email_to: ""
+notify_email_from: "deploy@{{ ansible_hostname }}"
+notify_email_on_success: false
+notify_email_on_failure: true
+notify_email_max_output_lines: 100
+notify_email_rate_limit: 10

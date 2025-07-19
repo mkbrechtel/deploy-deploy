@@ -1,0 +1,14 @@
+#!/bin/bash
+# Wrapper script to run deploy and capture output
+
+set -euo pipefail
+
+DEPLOY_ID="$1"
+OUTPUT_DIR="/run/deploy"
+OUTPUT_FILE="$OUTPUT_DIR/$DEPLOY_ID.out"
+
+# Create output directory
+mkdir -p "$OUTPUT_DIR"
+
+# Run the actual deploy script and capture output
+exec {{deploy_systemd_units_instance_path}}/deploy 2>&1 | tee "$OUTPUT_FILE"
