@@ -1,4 +1,5 @@
 ---
+
 - name: Directory for the {{ deploy_instance_id }} deploy instance in {{ deploy_instance_scope }} scope
   file:
     path: "{{ deploy_instance_path }}"

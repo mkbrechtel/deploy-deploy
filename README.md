@@ -13,6 +13,9 @@ It deploys systemd units with Ansible that run the actual deployment routines.
 *Deploy deploy!* has two modes of operation:
 
 - User mode: deployment runs in the scope of a systemd user session. It can be used for local development and deployment workflows for a singe user.
+- System mode: deployment runs in the scope of the system. It can be used for deployment workflows for a whole system.
+
+### Installation
 
 ### User mode
 WIP
