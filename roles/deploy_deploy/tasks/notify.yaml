@@ -22,9 +22,9 @@
     - notify-email.sh
   when: deploy_systemd_units_scope == "system"
 
-- name: Template run.sh wrapper script
-  template:
-    src: systemd/deploy-run.sh.j2
+- name: Copy run.sh wrapper script
+  copy:
+    src: deploy-run.sh
     dest: /etc/deploy/run.sh
     mode: '0755'
   when: deploy_systemd_units_scope == "system"
