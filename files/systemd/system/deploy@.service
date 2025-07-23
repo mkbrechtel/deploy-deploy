@@ -4,11 +4,9 @@ Description=Deploy %i!
 [Service]
 WorkingDirectory=/etc/deploy/%i
 ExecStartPre=/etc/deploy/%i/deploy.init
-ExecStart=/etc/deploy/run.sh %i
+ExecStart=/etc/deploy/%i/deploy
 ExecStopPost=/etc/deploy/notify.sh "%H" "%i" "${EXIT_STATUS}" "/run/deploy/%i.out"
 EnvironmentFile=/etc/deploy/%i/deploy.env
-User=$USER
-Group=$GROUP
 
 [Install]
 WantedBy=deploy.target

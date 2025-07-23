@@ -11,13 +11,6 @@
     mode: '0755'
   become: true
 
-- name: Install deploy run script
-  copy:
-    src: deploy-run.sh
-    dest: /etc/deploy/run.sh
-    mode: '0755'
-  become: true
-
 - name: Install notification scripts
   copy:
     src: "{{ item }}"
