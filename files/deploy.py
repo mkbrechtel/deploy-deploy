@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 import sys
 import subprocess
 import json
@@ -96,7 +96,7 @@ for line in proc.stdout:
         # Check for systemd service start message
         if comm == 'systemd' and unit_field == unit_name:
             # Look for job_emit_done_message with 'Started' in message
-            if code_func == 'job_emit_done_message' and 'Started' in message and skip_until_start:
+            if code_func == 'job_emit_start_message' and skip_until_start:
                 service_started = True
                 is_logging = True
                 skip_until_start = False  # Now we can start processing messages
