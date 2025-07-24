@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 import sys
 import subprocess
-import systemd.journal
+import json
 import time
+import random
+from datetime import datetime
 
 def main():
     if len(sys.argv) != 2:
@@ -16,51 +18,58 @@ def main():
     result = subprocess.run(['systemctl', 'is-active', unit_name], 
                           capture_output=True, text=True)
     if result.stdout.strip() == 'active':
-        print(f"Unit {unit_name} is already running, waiting for completion...")
-        # Wait for it to finish
+        print(f"Waiting for {unit_name} to finish...")
         subprocess.run(['systemctl', 'status', unit_name, '--wait'])
+        # Random wait after service stops
+        wait_time = random.uniform(0.5, 3.0)
+        time.sleep(wait_time)
     
     # Start the unit
-    result = subprocess.run(['systemctl', 'start', unit_name], capture_output=True)
+    result = subprocess.run(['systemctl', 'start', unit_name])
     if result.returncode != 0:
-        print(f"Failed to start {unit_name}: {result.stderr.decode()}", file=sys.stderr)
         sys.exit(1)
     
-    # Setup journal reader
-    reader = systemd.journal.Reader()
-    reader.this_boot()
-    reader.add_match(_SYSTEMD_UNIT=unit_name)
+    # Wait a moment for systemd to register the start
+    time.sleep(0.1)
     
-    # Move to end and wait for new entries
-    reader.seek_tail()
-    reader.get_previous()  # Position at the end
+    # Get the start time of our service
+    result = subprocess.run(['systemctl', 'show', unit_name, '--property=ExecMainStartTimestamp'], 
+                          capture_output=True, text=True)
+    start_time = result.stdout.strip().split('=')[1]
     
-    # Stream logs
-    completed = False
-    timeout_count = 0
+    # Start logging from journal, only showing entries since service start
+    proc = subprocess.Popen(['journalctl', '-f', '-u', unit_name, '--output=json', '--since', start_time],
+                           stdout=subprocess.PIPE, text=True)
     
-    while not completed:
-        # Wait for new entries
-        if reader.wait(0.1) == systemd.journal.APPEND:
-            for entry in reader:
-                msg = entry.get('MESSAGE', '')
-                if msg and not msg.startswith('No notifiers'):
-                    print(msg)
-                    if 'kthxbye' in msg:
-                        completed = True
-                        break
-            timeout_count = 0
-        else:
-            timeout_count += 1
-            if timeout_count > 150:  # 15 seconds timeout
-                break
+    try:
+        for line in proc.stdout:
+            entry = json.loads(line)
+            timestamp = datetime.fromtimestamp(int(entry.get('__REALTIME_TIMESTAMP', 0)) / 1000000)
+            pid = entry.get('_PID', '-')
+            comm = entry.get('_COMM', 'deploy')
+            message = entry.get('MESSAGE', '')
             
-        # Check if unit is still active
-        if not completed and timeout_count % 10 == 0:
+            # Skip systemd's own messages
+            if comm == 'systemd':
+                continue
+                
+            if message:
+                print(f"{timestamp.strftime('%b %d %H:%M:%S')} {comm}[{pid}]: {message}")
+            
+            # Check if unit finished
             result = subprocess.run(['systemctl', 'is-active', unit_name], 
                                   capture_output=True, text=True)
             if result.stdout.strip() != 'active':
-                completed = True
+                proc.terminate()
+                # Get exit code
+                result = subprocess.run(['systemctl', 'show', unit_name, '--property=ExecMainStatus'], 
+                                      capture_output=True, text=True)
+                return_code = int(result.stdout.split('=')[1].strip())
+                print(f"\nProcess finished with exit code: {return_code}")
+                sys.exit(return_code)
+    except KeyboardInterrupt:
+        proc.terminate()
+        sys.exit(130)
 
 if __name__ == "__main__":
     main()
