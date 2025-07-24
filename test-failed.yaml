@@ -1,0 +1,12 @@
+---
+
+- name: Test deploy@failed instance
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - role: deploy_deploy
+      vars:
+        deploy_systemd_scope: user
+        deploy_systemd_target_wants: []
+        deploy_install_dir: "{{ ansible_user_dir }}/.local"
+    - role: test_fail

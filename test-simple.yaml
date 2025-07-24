@@ -1,8 +1,0 @@
----
-- name: Test deploy_deploy role
-  hosts: localhost
-  connection: local
-  roles:
-    - role: deploy_deploy
-      deploy_systemd_units_scope: user
-      deploy_user_install_mode: home

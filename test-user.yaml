@@ -7,7 +7,8 @@
     deploy_instance_scope: user
   roles:
     - deploy_deploy
-    - test_instance
+    - test_ohai
+    - test_fail
     - role: ansible_play
       deploy_instance_id: ohai
       ansible_play_git_repo: "{{playbook_dir}}"
