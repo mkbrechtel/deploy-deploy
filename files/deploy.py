@@ -4,6 +4,7 @@ import subprocess
 import json
 import time
 import random
+import re
 from datetime import datetime
 from collections import deque
 
@@ -13,6 +14,16 @@ def main():
         sys.exit(1)
         
     instance = sys.argv[1]
+    
+    # Validate instance name
+    if not re.match(r'^[a-z0-9.-]+$', instance):
+        print(f"Error: Instance name '{instance}' contains invalid characters. Only [a-z0-9.-] are allowed.", file=sys.stderr)
+        sys.exit(1)
+    
+    if len(instance) > 128:
+        print(f"Error: Instance name '{instance}' is too long. Maximum 128 characters allowed.", file=sys.stderr)
+        sys.exit(1)
+    
     unit_name = f"deploy@{instance}.service"
     
     # First attach to the log - start journalctl immediately
