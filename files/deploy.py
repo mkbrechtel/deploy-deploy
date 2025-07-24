@@ -77,7 +77,12 @@ def main():
                                       capture_output=True, text=True)
                 if result.stdout.strip() != 'active':
                     # Service stopped, but keep reading for systemd's exit message
-                    if comm == 'systemd' and ('Stopped' in message or 'Failed' in message or 'Succeeded' in message):
+                    # Check if this is systemd's message about our specific unit
+                    unit_field = entry.get('UNIT', entry.get('_SYSTEMD_UNIT', ''))
+                    if comm == 'systemd' and unit_field == unit_name and (
+                        'Deactivated successfully' in message or 
+                        'Failed' in message or 
+                        'Stopped' in message):
                         # This is systemd's final message about the service
                         proc.terminate()
                         # Get exit code
