@@ -25,3 +25,17 @@ Some files are intentionally placed in `./files/` at the project root rather tha
 - Other scripts that need to be globally accessible across the project
 
 **Note**: Do NOT duplicate these files into `roles/deploy_deploy/files/` - Ansible will find them in the project's `./files/` directory when the role references them with relative paths.
+
+#### Using Relative Paths
+
+You can also use relative paths in Ansible tasks to explicitly reference files outside the role structure. For example:
+
+```yaml
+- name: Copy a file from project root
+  copy:
+    src: "../../files/deploy.py"  # Relative to the role's files/ directory
+    dest: /usr/local/bin/deploy
+    mode: '0755'
+```
+
+However, this is usually not necessary because Ansible's search path will find `deploy.py` in the project's `./files/` directory automatically when you just use `src: deploy.py`.
