@@ -111,7 +111,8 @@ for line in proc.stdout:
                 result = subprocess.run(['systemctl', 'show', unit_name, '--property=ExecMainStatus'], 
                                       capture_output=True, text=True)
                 return_code = int(result.stdout.split('=')[1].strip())
-                print(f"Process finished with exit code: {return_code}")
+                if return_code != 0:
+                    print(f"Process failed with exit code: {return_code}")
                 
                 # Terminate journalctl process and exit with the same code
                 proc.terminate()
