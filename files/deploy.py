@@ -26,11 +26,6 @@ def main():
     
     unit_name = f"deploy@{instance}.service"
     
-    # First attach to the log - start journalctl immediately
-    # Use --lines=0 to start from now, --follow to keep following
-    proc = subprocess.Popen(['journalctl', '-f', '-u', unit_name, '--output=json', '--lines=0'],
-                           stdout=subprocess.PIPE, text=True)
-    
     # Buffer for messages until service starts
     message_buffer = deque()
     service_started = False
@@ -41,11 +36,37 @@ def main():
                               capture_output=True, text=True)
         if result.stdout.strip() == 'active':
             print(f"Waiting for {unit_name} to finish...")
-            # Wait for service to stop
-            subprocess.run(['systemctl', 'status', unit_name, '--wait'])
-            # Random wait after service stops
-            wait_time = random.uniform(0.5, 3.0)
-            time.sleep(wait_time)
+            
+            # Attach to the log to wait for service completion
+            # Use --lines=1000 to catch recent messages including the completion
+            wait_proc = subprocess.Popen(['journalctl', '-f', '-u', unit_name, '--output=json', '--lines=1000'],
+                                       stdout=subprocess.PIPE, text=True)
+            
+            # Read journal until we see the service stop
+            for line in wait_proc.stdout:
+                try:
+                    entry = json.loads(line)
+                    comm = entry.get('_COMM', '')
+                    unit_field = entry.get('UNIT', entry.get('_SYSTEMD_UNIT', ''))
+                    code_func = entry.get('CODE_FUNC', '')
+                    
+                    # Check for systemd's exit message
+                    if comm == 'systemd' and unit_field == unit_name and (
+                        code_func == 'unit_log_success' or 
+                        code_func == 'unit_log_failure'):
+                        # Service has stopped
+                        wait_proc.terminate()
+                        break
+                except json.JSONDecodeError:
+                    continue
+            
+            # Wait about a second after service stops
+            time.sleep(1.0)
+        
+        # Now start following the log for the new service
+        # Use --lines=0 to start from now, --follow to keep following
+        proc = subprocess.Popen(['journalctl', '-f', '-u', unit_name, '--output=json', '--lines=0'],
+                               stdout=subprocess.PIPE, text=True)
         
         # Start the unit
         result = subprocess.run(['systemctl', 'start', unit_name])
