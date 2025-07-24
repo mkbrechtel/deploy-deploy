@@ -51,14 +51,12 @@ def main():
                 comm = entry.get('_COMM', 'deploy')
                 message = entry.get('MESSAGE', '')
                 
-                # Check for systemd service start message
+                # Check for systemd service start message using CODE_FUNC
                 if not service_started and comm == 'systemd':
-                    # Debug: print all fields for systemd messages
-                    print(f"DEBUG: systemd message fields: {json.dumps(entry, indent=2)}", file=sys.stderr)
+                    code_func = entry.get('CODE_FUNC', '')
                     
-                    # Look for the special field indicating service has started
-                    # Systemd sends a message when the main process starts
-                    if 'Started' in message and unit_name in message:
+                    # Look for job_emit_done_message with 'Started' in message
+                    if code_func == 'job_emit_done_message' and 'Started' in message and unit_name in message:
                         service_started = True
                         # Output all buffered messages
                         for buffered_msg in message_buffer:
@@ -80,16 +78,14 @@ def main():
                                       capture_output=True, text=True)
                 if result.stdout.strip() != 'active':
                     # Service stopped, but keep reading for systemd's exit message
-                    if comm == 'systemd':
-                        # Debug: print all fields for systemd exit messages
-                        print(f"DEBUG: systemd EXIT message fields: {json.dumps(entry, indent=2)}", file=sys.stderr)
                     
-                    # Check if this is systemd's message about our specific unit
+                    # Check if this is systemd's message about our specific unit using CODE_FUNC
                     unit_field = entry.get('UNIT', entry.get('_SYSTEMD_UNIT', ''))
+                    code_func = entry.get('CODE_FUNC', '')
+                    
                     if comm == 'systemd' and unit_field == unit_name and (
-                        'Deactivated successfully' in message or 
-                        'Failed' in message or 
-                        'Stopped' in message):
+                        code_func == 'unit_log_success' or 
+                        code_func == 'unit_log_failure'):
                         # This is systemd's final message about the service
                         proc.terminate()
                         # Get exit code
