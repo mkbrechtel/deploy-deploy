@@ -1,0 +1,41 @@
+[
+  {
+    "id": "deploy-instance",
+    "execute-command": "/usr/bin/sudo",
+    "command-working-directory": "/tmp",
+    "pass-arguments-to-command": [
+      {
+        "source": "string",
+        "name": "/usr/local/bin/deploy"
+      },
+      {
+        "source": "payload",
+        "name": "instance"
+      }
+    ],
+    "trigger-rule": {
+      "and": [
+        {
+          "match": {
+            "type": "payload-hmac-sha256",
+            "secret": "{{ webhook_auth_password }}",
+            "parameter": {
+              "source": "header",
+              "name": "X-Webhook-Signature"
+            }
+          }
+        },
+        {
+          "match": {
+            "type": "value",
+            "value": "deploy",
+            "parameter": {
+              "source": "payload",
+              "name": "action"
+            }
+          }
+        }
+      ]
+    }
+  }
+]

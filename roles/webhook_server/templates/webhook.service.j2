@@ -1,0 +1,27 @@
+[Unit]
+Description=Webhook server
+After=network.target
+
+[Service]
+Type=simple
+User={{ webhook_user }}
+Group={{ webhook_group }}
+ExecStart=/usr/bin/webhook -hooks {{ webhook_config_file }} -ip {{ webhook_listen_address }} -port {{ webhook_port }} -verbose -hotreload -logfile {{ webhook_log_file }}
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Security hardening - adjusted to allow sudo
+NoNewPrivileges=false
+PrivateTmp=false
+ProtectSystem=false
+ProtectHome=false
+ReadWritePaths={{ webhook_log_dir }} {{ webhook_config_dir }}
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=false
+RestrictRealtime=true
+
+[Install]
+WantedBy=multi-user.target

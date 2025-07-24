@@ -5,6 +5,7 @@
   become: true
   roles:
     - deploy_deploy
+    - webhook_server
     - test_ohai
     - test_fail
     - role: ansible_play

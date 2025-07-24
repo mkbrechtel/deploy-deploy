@@ -1,0 +1,12 @@
+---
+webhook_user: webhook
+webhook_group: webhook
+webhook_home: /var/lib/webhook
+webhook_config_dir: /etc/webhook
+webhook_config_file: "{{ webhook_config_dir }}/hooks.json"
+webhook_port: 9000
+webhook_listen_address: "0.0.0.0"
+webhook_auth_user: deploy
+webhook_auth_password: "{{ vault_webhook_auth_password | default('changeme') }}"
+webhook_log_file: /var/log/webhook/webhook.log
+webhook_log_dir: /var/log/webhook
