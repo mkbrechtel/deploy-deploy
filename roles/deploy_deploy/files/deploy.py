@@ -5,6 +5,7 @@ import json
 import time
 import random
 from datetime import datetime
+from collections import deque
 
 def main():
     if len(sys.argv) != 2:
@@ -14,59 +15,83 @@ def main():
     instance = sys.argv[1]
     unit_name = f"deploy@{instance}.service"
     
-    # Check if already running and wait
-    result = subprocess.run(['systemctl', 'is-active', unit_name], 
-                          capture_output=True, text=True)
-    if result.stdout.strip() == 'active':
-        print(f"Waiting for {unit_name} to finish...")
-        subprocess.run(['systemctl', 'status', unit_name, '--wait'])
-        # Random wait after service stops
-        wait_time = random.uniform(0.5, 3.0)
-        time.sleep(wait_time)
-    
-    # Start the unit
-    result = subprocess.run(['systemctl', 'start', unit_name])
-    if result.returncode != 0:
-        sys.exit(1)
-    
-    # Wait a moment for systemd to register the start
-    time.sleep(0.1)
-    
-    # Get the start time of our service
-    result = subprocess.run(['systemctl', 'show', unit_name, '--property=ExecMainStartTimestamp'], 
-                          capture_output=True, text=True)
-    start_time = result.stdout.strip().split('=')[1]
-    
-    # Start logging from journal, only showing entries since service start
-    proc = subprocess.Popen(['journalctl', '-f', '-u', unit_name, '--output=json', '--since', start_time],
+    # First attach to the log - start journalctl immediately
+    # Use --lines=0 to start from now, --follow to keep following
+    proc = subprocess.Popen(['journalctl', '-f', '-u', unit_name, '--output=json', '--lines=0'],
                            stdout=subprocess.PIPE, text=True)
     
+    # Buffer for messages until service starts
+    message_buffer = deque()
+    service_started = False
+    
     try:
+        # Check if service is already running
+        result = subprocess.run(['systemctl', 'is-active', unit_name], 
+                              capture_output=True, text=True)
+        if result.stdout.strip() == 'active':
+            print(f"Waiting for {unit_name} to finish...")
+            # Wait for service to stop
+            subprocess.run(['systemctl', 'status', unit_name, '--wait'])
+            # Random wait after service stops
+            wait_time = random.uniform(0.5, 3.0)
+            time.sleep(wait_time)
+        
+        # Start the unit
+        result = subprocess.run(['systemctl', 'start', unit_name])
+        if result.returncode != 0:
+            proc.terminate()
+            sys.exit(1)
+        
+        # Now process log messages
         for line in proc.stdout:
-            entry = json.loads(line)
-            timestamp = datetime.fromtimestamp(int(entry.get('__REALTIME_TIMESTAMP', 0)) / 1000000)
-            pid = entry.get('_PID', '-')
-            comm = entry.get('_COMM', 'deploy')
-            message = entry.get('MESSAGE', '')
-            
-            # Skip systemd's own messages
-            if comm == 'systemd':
+            try:
+                entry = json.loads(line)
+                timestamp = datetime.fromtimestamp(int(entry.get('__REALTIME_TIMESTAMP', 0)) / 1000000)
+                pid = entry.get('_PID', '-')
+                comm = entry.get('_COMM', 'deploy')
+                message = entry.get('MESSAGE', '')
+                
+                # Check for systemd service start message
+                if not service_started and comm == 'systemd':
+                    # Look for the special field indicating service has started
+                    # Systemd sends a message when the main process starts
+                    if 'Started' in message and unit_name in message:
+                        service_started = True
+                        # Output all buffered messages
+                        for buffered_msg in message_buffer:
+                            print(buffered_msg)
+                        message_buffer.clear()
+                
+                # Format the message for output
+                formatted_msg = f"{timestamp.strftime('%b %d %H:%M:%S')} {comm}[{pid}]: {message}"
+                
+                if service_started:
+                    # Service has started, output immediately
+                    print(formatted_msg)
+                else:
+                    # Buffer messages until service starts
+                    message_buffer.append(formatted_msg)
+                
+                # Check if unit finished
+                result = subprocess.run(['systemctl', 'is-active', unit_name], 
+                                      capture_output=True, text=True)
+                if result.stdout.strip() != 'active':
+                    # Service stopped, but keep reading for systemd's exit message
+                    if comm == 'systemd' and ('Stopped' in message or 'Failed' in message or 'Succeeded' in message):
+                        # This is systemd's final message about the service
+                        proc.terminate()
+                        # Get exit code
+                        result = subprocess.run(['systemctl', 'show', unit_name, '--property=ExecMainStatus'], 
+                                              capture_output=True, text=True)
+                        return_code = int(result.stdout.split('=')[1].strip())
+                        print(f"\nProcess finished with exit code: {return_code}")
+                        sys.exit(return_code)
+                    
+            except json.JSONDecodeError:
+                # Log malformed JSON to stderr
+                print(f"Warning: Malformed JSON in journalctl output: {line.strip()}", file=sys.stderr)
                 continue
                 
-            if message:
-                print(f"{timestamp.strftime('%b %d %H:%M:%S')} {comm}[{pid}]: {message}")
-            
-            # Check if unit finished
-            result = subprocess.run(['systemctl', 'is-active', unit_name], 
-                                  capture_output=True, text=True)
-            if result.stdout.strip() != 'active':
-                proc.terminate()
-                # Get exit code
-                result = subprocess.run(['systemctl', 'show', unit_name, '--property=ExecMainStatus'], 
-                                      capture_output=True, text=True)
-                return_code = int(result.stdout.split('=')[1].strip())
-                print(f"\nProcess finished with exit code: {return_code}")
-                sys.exit(return_code)
     except KeyboardInterrupt:
         proc.terminate()
         sys.exit(130)

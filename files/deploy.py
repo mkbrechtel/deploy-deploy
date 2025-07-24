@@ -76,13 +76,16 @@ def main():
                 result = subprocess.run(['systemctl', 'is-active', unit_name], 
                                       capture_output=True, text=True)
                 if result.stdout.strip() != 'active':
-                    proc.terminate()
-                    # Get exit code
-                    result = subprocess.run(['systemctl', 'show', unit_name, '--property=ExecMainStatus'], 
-                                          capture_output=True, text=True)
-                    return_code = int(result.stdout.split('=')[1].strip())
-                    print(f"\nProcess finished with exit code: {return_code}")
-                    sys.exit(return_code)
+                    # Service stopped, but keep reading for systemd's exit message
+                    if comm == 'systemd' and ('Stopped' in message or 'Failed' in message or 'Succeeded' in message):
+                        # This is systemd's final message about the service
+                        proc.terminate()
+                        # Get exit code
+                        result = subprocess.run(['systemctl', 'show', unit_name, '--property=ExecMainStatus'], 
+                                              capture_output=True, text=True)
+                        return_code = int(result.stdout.split('=')[1].strip())
+                        print(f"\nProcess finished with exit code: {return_code}")
+                        sys.exit(return_code)
                     
             except json.JSONDecodeError:
                 # Log malformed JSON to stderr
