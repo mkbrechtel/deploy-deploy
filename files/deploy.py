@@ -5,8 +5,22 @@ import json
 import time
 import random
 import re
+import signal
 from datetime import datetime
 from collections import deque
+
+# Global variables for cleanup
+proc = None
+unit_name = None
+
+def signal_handler(signum, frame):
+    """Handle keyboard interrupt gracefully"""
+    if proc:
+        proc.terminate()
+    sys.exit(130)  # Standard exit code for SIGINT
+        
+# Set up signal handler
+signal.signal(signal.SIGINT, signal_handler)
 
 if len(sys.argv) != 2:
     print("Usage: deploy.py <instance>", file=sys.stderr)
@@ -97,7 +111,7 @@ for line in proc.stdout:
                 result = subprocess.run(['systemctl', 'show', unit_name, '--property=ExecMainStatus'], 
                                       capture_output=True, text=True)
                 return_code = int(result.stdout.split('=')[1].strip())
-                print(f"\nProcess finished with exit code: {return_code}")
+                print(f"Process finished with exit code: {return_code}")
                 
                 # Terminate journalctl process and exit with the same code
                 proc.terminate()
