@@ -1,6 +1,6 @@
 [
   {
-    "id": "deploy-instance",
+    "id": "deploy",
     "execute-command": "/usr/bin/sudo",
     "command-working-directory": "/tmp",
     "pass-arguments-to-command": [
@@ -9,10 +9,11 @@
         "name": "/usr/local/bin/deploy"
       },
       {
-        "source": "payload",
+        "source": "url",
         "name": "instance"
       }
     ],
+    "response-message": "Deployment triggered for instance",
     "trigger-rule": {
       "and": [
         {
@@ -32,6 +33,16 @@
             "parameter": {
               "source": "payload",
               "name": "action"
+            }
+          }
+        },
+        {
+          "match": {
+            "type": "regex",
+            "regex": "^[a-z0-9.-]{1,128}$",
+            "parameter": {
+              "source": "url",
+              "name": "instance"
             }
           }
         }
