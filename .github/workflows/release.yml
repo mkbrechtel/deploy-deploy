@@ -1,0 +1,81 @@
+name: Release Ansible Collection
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Ansible
+        run: |
+          pip install ansible-core
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Build collection
+        run: |
+          ansible-galaxy collection build --output-path ./dist
+
+      - name: Get collection filename
+        id: get_filename
+        run: |
+          COLLECTION_FILE=$(ls ./dist/*.tar.gz)
+          echo "COLLECTION_FILE=$(basename $COLLECTION_FILE)" >> $GITHUB_OUTPUT
+          echo "COLLECTION_PATH=$COLLECTION_FILE" >> $GITHUB_OUTPUT
+
+      - name: Extract changelog for release
+        id: changelog
+        run: |
+          # Extract the changelog section for this version
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          CHANGELOG_FILE="CHANGELOG.md"
+          
+          # Create a temporary file for the release notes
+          echo "## What's Changed" > release_notes.md
+          echo "" >> release_notes.md
+          
+          # Extract the section for this version
+          awk -v version="$VERSION" '
+            /^## \[/ {
+              if (found) exit
+              if ($2 == "["version"]") found=1
+              next
+            }
+            found && /^###/ {print; next}
+            found && /^-/ {print; next}
+            found && /^$/ {print; next}
+          ' "$CHANGELOG_FILE" >> release_notes.md
+          
+          echo "Release notes created for version $VERSION"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.get_filename.outputs.COLLECTION_PATH }}
+          body_path: release_notes.md
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Ansible Galaxy
+        env:
+          ANSIBLE_GALAXY_API_KEY: ${{ secrets.ANSIBLE_GALAXY_API_KEY }}
+        run: |
+          ansible-galaxy collection publish \
+            --api-key="$ANSIBLE_GALAXY_API_KEY" \
+            "${{ steps.get_filename.outputs.COLLECTION_PATH }}"
