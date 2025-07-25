@@ -1,6 +1,6 @@
 # deploy_deploy
 
-Main role for deploy-deploy system that sets up deployment infrastructure.
+Main role for deploy-deploy system that provides the core deployment infrastructure - installs systemd units, wrapper scripts, and the deploy command to manage deployments.
 
 ## Requirements
 

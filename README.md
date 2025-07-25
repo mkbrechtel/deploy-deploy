@@ -2,11 +2,9 @@
 
 WIP: currently in early development
 
-**Deploy deploy!** deploys all the deployment things required to deploy *ALL THE THINGS*!
+**Deploy deploy!** provides deployment infrastructure for running scripts with systemd in a controlled way. It supports shell scripts, Ansible playbooks, Terraform projects, and other deployment tools.
 
-This repo is supposed to contain an opinionated **Ansible Collection** that provides the deployment of a **GitOps deployment workflow**  based on **ansible-pull** or **shell scripts** and **systemd**.
-
-It deploys systemd units with Ansible that run the actual deployment routines. 
+This **Ansible Collection** installs the necessary infrastructure - systemd units, wrapper scripts, and management tools - to execute your deployment scripts reliably. It provides different ways to trigger deployments, including webhooks and git hooks, enabling simple GitOps workflows. 
 
 
 ## Getting started

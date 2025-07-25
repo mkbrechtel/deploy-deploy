@@ -1,41 +1,35 @@
 ## Ansible Project Structure
 
-### File Organization and Search Path
+### File Organization
 
-Some files are intentionally placed in `./files/` at the project root rather than in `roles/deploy_deploy/files/`. This is a deliberate design decision based on how Ansible searches for files.
+Files can be placed in `./files/` at the collection root instead of in individual role directories. Ansible's search path includes the collection's files directory, so roles can reference these files directly without duplication.
 
-#### Why Files Are in ./files/
-
-1. **Ansible File Search Order**: When using the `copy` or `template` modules with a relative `src` path, Ansible searches in this order:
-   - Files in the role's `files/` or `templates/` directory
-   - Files in the playbook directory's `files/` or `templates/` directory
-   - Files relative to the playbook file itself
-   - Files in the collections path
-
-2. **Development Workflow**: By keeping core functionality files like `deploy.py` in the root `./files/` directory:
-   - Changes are centralized in one location
-   - Development and testing can happen without modifying role internals
-   - The files are accessible to both the role and any direct playbook usage
-
-3. **Collections Path Behavior**: When this project is installed as an Ansible collection, Ansible will search the collection's path structure, making these files available to the role without needing to duplicate them.
-
-#### Important Files in ./files/
-
-- `deploy.py` - The main deployment wrapper script (installed as `/usr/local/bin/deploy`)
-- Other scripts that need to be globally accessible across the project
-
-**Note**: Do NOT duplicate these files into `roles/deploy_deploy/files/` - Ansible will find them in the project's `./files/` directory when the role references them with relative paths.
-
-#### Using Relative Paths
-
-You can also use relative paths in Ansible tasks to explicitly reference files outside the role structure. For example:
+For example, `deploy.py` is in `./files/` and can be referenced by any role using:
 
 ```yaml
-- name: Copy a file from project root
+- name: Copy deploy script
   copy:
-    src: "../../files/deploy.py"  # Relative to the role's files/ directory
+    src: deploy.py
     dest: /usr/local/bin/deploy
     mode: '0755'
 ```
 
-However, this is usually not necessary because Ansible's search path will find `deploy.py` in the project's `./files/` directory automatically when you just use `src: deploy.py`.
+## Release Process
+
+To create a new release:
+
+1. Update the version in `galaxy.yml`
+2. Update the CHANGELOG.md with release notes
+3. Commit all changes with a descriptive message
+4. Create an annotated git tag: `git tag -a v0.0.X -m "Release version 0.0.X - Brief description"`
+5. Push commits and tag: `git push origin main --tags`
+
+The GitHub Actions workflow will automatically:
+- Build the Ansible collection
+- Publish to Ansible Galaxy
+- Create a GitHub release (if configured)
+
+Requirements for successful Galaxy import:
+- All roles must have a `README.md` file
+- All roles must have a `meta/main.yml` file with galaxy_info
+- The collection must have a valid `galaxy.yml` file
