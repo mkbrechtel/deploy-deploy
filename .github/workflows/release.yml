@@ -5,9 +5,6 @@ on:
     tags:
       - 'v*.*.*'
 
-permissions:
-  contents: write
-
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -39,41 +36,6 @@ jobs:
           echo "COLLECTION_FILE=$(basename $COLLECTION_FILE)" >> $GITHUB_OUTPUT
           echo "COLLECTION_PATH=$COLLECTION_FILE" >> $GITHUB_OUTPUT
 
-      - name: Extract changelog for release
-        id: changelog
-        run: |
-          # Extract the changelog section for this version
-          VERSION="${{ steps.get_version.outputs.VERSION }}"
-          CHANGELOG_FILE="CHANGELOG.md"
-          
-          # Create a temporary file for the release notes
-          echo "## What's Changed" > release_notes.md
-          echo "" >> release_notes.md
-          
-          # Extract the section for this version
-          awk -v version="$VERSION" '
-            /^## \[/ {
-              if (found) exit
-              if ($2 == "["version"]") found=1
-              next
-            }
-            found && /^###/ {print; next}
-            found && /^-/ {print; next}
-            found && /^$/ {print; next}
-          ' "$CHANGELOG_FILE" >> release_notes.md
-          
-          echo "Release notes created for version $VERSION"
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ${{ steps.get_filename.outputs.COLLECTION_PATH }}
-          body_path: release_notes.md
-          name: Release ${{ steps.get_version.outputs.VERSION }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Ansible Galaxy
         env:
