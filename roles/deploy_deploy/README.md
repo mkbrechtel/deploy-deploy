@@ -2,6 +2,11 @@
 
 Main role for deploy-deploy system that sets up deployment infrastructure.
 
+## Requirements
+
+- Debian-based operating system
+- Systemd init system
+
 ## Role Variables
 
 See `defaults/main.yaml` for available variables.
@@ -21,3 +26,7 @@ None.
 ## License
 
 Apache-2.0
+
+## Author Information
+
+This role was created for the mkbrechtel.deploy_deploy collection.

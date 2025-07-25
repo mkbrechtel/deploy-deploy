@@ -1,17 +1,20 @@
 ---
 galaxy_info:
   author: Markus Katharina Brechtel
-  description: Deploy-deploy deploys all the deployment things required to deploy ALL THE THINGS!
+  description: Test role for validating failure scenarios
   license: Apache-2.0
   min_ansible_version: '2.14'
   platforms:
+    - name: Ubuntu
+      versions:
+        - all
     - name: Debian
       versions:
-        - bullseye
-        - bookworm
+        - all
+    - name: EL
+      versions:
+        - all
   galaxy_tags:
-    - deployment
-    - systemd
-    - automation
+    - testing
 
 dependencies: []
